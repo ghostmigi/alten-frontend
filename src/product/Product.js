@@ -161,7 +161,6 @@ const ProductCards = () => {
         ))}
       </Grid>
 
-      {/* Dialog for Editing Product */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Edit Product</DialogTitle>
         <DialogContent>
@@ -171,6 +170,14 @@ const ProductCards = () => {
                 label="Product Name"
                 name="name"
                 value={selectedProduct.name}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Product Code"
+                name="code"
+                value={selectedProduct.code}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
@@ -201,9 +208,35 @@ const ProductCards = () => {
                 margin="normal"
               />
               <TextField
+                label="Inventory"
+                name="quantity"
+                type="number"
+                value={selectedProduct.quantity}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
                 label="Inventory Status"
                 name="inventoryStatus"
                 value={selectedProduct.inventoryStatus}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Rating"
+                name="rating"
+                type="number"
+                value={selectedProduct.rating}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Shell ID"
+                name="shellId"
+                value={selectedProduct.shellId}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
