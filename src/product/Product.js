@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   Card,
@@ -8,10 +9,19 @@ import {
   Button,
   Grid,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Box,
 } from "@mui/material";
 
 const ProductCards = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const token = localStorage.getItem("authToken");
 
   useEffect(() => {
@@ -31,6 +41,37 @@ const ProductCards = () => {
     fetchProducts();
   }, [token]);
 
+  const handleEdit = (product) => {
+    setSelectedProduct(product);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleSave = async () => {
+    try {
+      await axios.put(
+        `http://localhost:8080/products/${selectedProduct.id}`,
+        selectedProduct,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setOpen(false);
+      setProducts(
+        products.map((product) =>
+          product.id === selectedProduct.id ? selectedProduct : product
+        )
+      );
+    } catch (error) {
+      console.error("Error updating product:", error);
+    }
+  };
+
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:8080/products/${id}`, {
@@ -44,9 +85,19 @@ const ProductCards = () => {
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedProduct((prevProduct) => ({
+      ...prevProduct,
+      [name]: value,
+    }));
+  };
+
   return (
     <Container>
-      <h1> Manage products:</h1>
+      <Typography variant="h4" gutterBottom>
+        Manage Products
+      </Typography>
       <Grid container spacing={3}>
         {products.map((product) => (
           <Grid item xs={12} sm={6} md={4} key={product.id}>
@@ -59,25 +110,40 @@ const ProductCards = () => {
                 style={{ objectFit: "cover" }}
               />
               <CardContent>
-                <Typography variant="h6">{product.name}</Typography>
-                <Typography color="text.secondary">
-                  {product.category}
+                <Typography variant="h6">Name: {product.name}</Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Code: {product.code}
                 </Typography>
-                <Typography>${product.price}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {product.description}
+                <Typography variant="body2" color="textSecondary">
+                  Category: {product.category}
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Inventory: {product.inventoryStatus} | Rating:{" "}
-                  {product.rating}
+                <Typography variant="body2" color="textSecondary">
+                  Price:${product.price}
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="body2" color="textSecondary">
+                  Description: {product.description}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Inventory: {product.quantity}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Inventory Status: {product.inventoryStatus}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Rating: {product.rating}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Shell ID: {product.shellId}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
                   Created: {new Date(product.createdAt).toLocaleDateString()}
                 </Typography>
+
                 <Button
                   variant="contained"
                   color="primary"
                   style={{ marginTop: "10px" }}
+                  onClick={() => handleEdit(product)}
                 >
                   Edit
                 </Button>
@@ -94,6 +160,66 @@ const ProductCards = () => {
           </Grid>
         ))}
       </Grid>
+
+      {/* Dialog for Editing Product */}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Edit Product</DialogTitle>
+        <DialogContent>
+          {selectedProduct && (
+            <>
+              <TextField
+                label="Product Name"
+                name="name"
+                value={selectedProduct.name}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Category"
+                name="category"
+                value={selectedProduct.category}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Price"
+                name="price"
+                type="number"
+                value={selectedProduct.price}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Description"
+                name="description"
+                value={selectedProduct.description}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Inventory Status"
+                name="inventoryStatus"
+                value={selectedProduct.inventoryStatus}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
