@@ -14,7 +14,13 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormGroup,
 } from "@mui/material";
+import { Label } from "reactstrap";
 
 const ProductCards = () => {
   const navigate = useNavigate();
@@ -145,72 +151,77 @@ const ProductCards = () => {
       >
         Create New Product
       </Button>
-      <Grid container spacing={3}>
-        {products.map((product) => (
-          <Grid item xs={12} sm={6} md={4} key={product.id}>
-            <Card>
-              <CardMedia
-                component="img"
-                height="200"
-                image={product.image}
-                alt={product.name}
-                style={{ objectFit: "cover" }}
-              />
-              <CardContent>
-                <Typography variant="h6">Name: {product.name}</Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Code: {product.code}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Category: {product.category}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Price:${product.price}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Description: {product.description}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Inventory: {product.quantity}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  InternalReference Status: {product.internalReference}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Shell ID: {product.shellId}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Inventory Status: {product.inventoryStatus}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Rating: {product.rating}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Created: {new Date(product.createdAt).toLocaleDateString()}
-                </Typography>
+      {products.length === 0 ? (
+        <Typography variant="h6" color="textSecondary" align="center">
+          No products available. Please create a new product.
+        </Typography>
+      ) : (
+        <Grid container spacing={3}>
+          {products.map((product) => (
+            <Grid item xs={12} sm={6} md={4} key={product.id}>
+              <Card>
+                <CardMedia
+                  component="img"
+                  height="200"
+                  image={product.image}
+                  alt={product.name}
+                  style={{ objectFit: "cover" }}
+                />
+                <CardContent>
+                  <Typography variant="h6">Name: {product.name}</Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Code: {product.code}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Category: {product.category}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Price:${product.price}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Description: {product.description}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Inventory: {product.quantity}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    InternalReference Status: {product.internalReference}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Shell ID: {product.shellId}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Inventory Status: {product.inventoryStatus}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Rating: {product.rating}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Created: {new Date(product.createdAt).toLocaleDateString()}
+                  </Typography>
 
-                <Button
-                  variant="contained"
-                  color="primary"
-                  style={{ marginTop: "10px" }}
-                  onClick={() => handleEdit(product)}
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="contained"
-                  color="error"
-                  style={{ marginLeft: "10px", marginTop: "10px" }}
-                  onClick={() => handleDelete(product.id)}
-                >
-                  Delete
-                </Button>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    style={{ marginTop: "10px" }}
+                    onClick={() => handleEdit(product)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    style={{ marginLeft: "10px", marginTop: "10px" }}
+                    onClick={() => handleDelete(product.id)}
+                  >
+                    Delete
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      )}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>
           {isCreate ? "Create Product" : "Edit Product"}
@@ -275,14 +286,18 @@ const ProductCards = () => {
             fullWidth
             margin="normal"
           />
-          <TextField
-            label="Inventory Status"
-            name="inventoryStatus"
-            value={selectedProduct.inventoryStatus}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Inventory Status</InputLabel>
+            <Select
+              name="inventoryStatus"
+              value={selectedProduct.inventoryStatus}
+              onChange={handleChange}
+            >
+              <MenuItem value="INSTOCK">INSTOCK</MenuItem>
+              <MenuItem value="LOWSTOCK">LOWSTOCK</MenuItem>
+              <MenuItem value="OUTOFSTOCK">OUTOFSTOCK</MenuItem>
+            </Select>
+          </FormControl>
           <TextField
             label="InternalReference"
             name="internalReference"
