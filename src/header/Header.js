@@ -11,6 +11,7 @@ import {
   ListItemIcon,
   ListItemText,
   Badge,
+  Box,
 } from "@mui/material";
 import {
   Menu as MenuIcon,
@@ -70,6 +71,31 @@ const Header = () => {
       fetchCartItems();
     } catch (error) {
       console.error("Error removing product from cart:", error);
+    }
+  };
+
+  const handleClearCart = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.error("No token found in localStorage");
+      return;
+    }
+
+    const userId = jwtDecode(token).id;
+
+    try {
+      await axios.post(
+        `http://localhost:8080/api/v1/cart/${userId}/clear`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setCartItems([]);
+    } catch (error) {
+      console.error("Error clearing the cart:", error);
     }
   };
 
@@ -286,8 +312,24 @@ const Header = () => {
           {cartItems.length > 0 ? (
             cartItems.map((product) => (
               <MenuItem key={product.id}>
-                <Typography variant="body1">{product.name}</Typography>
-                <Typography variant="body2">Price: ${product.price}</Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    width: "100%",
+                  }}
+                >
+                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                    Product: {product.name}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "gray", marginBottom: "8px" }}
+                  >
+                    Price: ${product.price}
+                  </Typography>
+                </Box>
                 <IconButton
                   edge="end"
                   color="error"
@@ -300,6 +342,12 @@ const Header = () => {
           ) : (
             <MenuItem disabled>No products in your cart.</MenuItem>
           )}
+          <MenuItem onClick={handleClearCart}>
+            <ListItemIcon>
+              <DeleteForever sx={{ color: "#FF8C00" }} />
+            </ListItemIcon>
+            <ListItemText primary="Clear Cart" />
+          </MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>
