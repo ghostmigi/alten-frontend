@@ -160,6 +160,12 @@ const Header = () => {
     return "?";
   };
 
+  const calculateTotalPrice = () => {
+    return cartItems.reduce((total, product) => {
+      return total + product.quantity * product.price;
+    }, 0);
+  };
+
   return (
     <AppBar
       position="static"
@@ -327,6 +333,12 @@ const Header = () => {
                     variant="body2"
                     sx={{ color: "gray", marginBottom: "8px" }}
                   >
+                    Quantity: {product.quantity}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "gray", marginBottom: "8px" }}
+                  >
                     Price: ${product.price}
                   </Typography>
                 </Box>
@@ -342,6 +354,19 @@ const Header = () => {
           ) : (
             <MenuItem disabled>No products in your cart.</MenuItem>
           )}
+          <MenuItem disabled>
+            <Typography
+              variant="body1"
+              sx={{
+                fontWeight: "bold",
+                color: "green",
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
+              Total: $ {calculateTotalPrice().toFixed(2)}
+            </Typography>
+          </MenuItem>
           <MenuItem onClick={handleClearCart}>
             <ListItemIcon>
               <DeleteForever sx={{ color: "#FF8C00" }} />
