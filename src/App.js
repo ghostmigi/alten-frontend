@@ -9,46 +9,49 @@ import Terms from "./terms/Terms";
 import Layout from "./sidebar/layout";
 import Product from "./product/Product";
 import AddProduct from "./product/AddProduct";
+import { CartProvider } from "./cart/CartContext";
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route
-          path="/products"
-          element={
-            <PrivateRoute
-              element={
-                <Layout>
-                  <Product />
-                </Layout>
-              }
-            />
-          }
-        />
-        <Route
-          path="/addproduct"
-          element={
-            <PrivateRoute
-              element={
-                <Layout>
-                  <AddProduct />
-                </Layout>
-              }
-            />
-          }
-        />
-        <Route
-          path="/auth/signup"
-          element={<PublicRoute element={<Signup />} />}
-        />
-        <Route
-          path="/auth/signin"
-          element={<PublicRoute element={<Signin />} />}
-        />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="*" element={<Navigate to="/auth/signin" replace />} />
-      </Routes>
+      <CartProvider>
+        <Routes>
+          <Route
+            path="/products"
+            element={
+              <PrivateRoute
+                element={
+                  <Layout>
+                    <Product />
+                  </Layout>
+                }
+              />
+            }
+          />
+          <Route
+            path="/addproduct"
+            element={
+              <PrivateRoute
+                element={
+                  <Layout>
+                    <AddProduct />
+                  </Layout>
+                }
+              />
+            }
+          />
+          <Route
+            path="/auth/signup"
+            element={<PublicRoute element={<Signup />} />}
+          />
+          <Route
+            path="/auth/signin"
+            element={<PublicRoute element={<Signin />} />}
+          />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="*" element={<Navigate to="/auth/signin" replace />} />
+        </Routes>
+      </CartProvider>
     </BrowserRouter>
   );
 }
