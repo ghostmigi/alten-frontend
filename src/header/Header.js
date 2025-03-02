@@ -11,7 +11,11 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import { Menu as MenuIcon, Logout as LogoutIcon } from "@mui/icons-material";
+import {
+  Menu as MenuIcon,
+  Logout as LogoutIcon,
+  ShoppingCart,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
@@ -84,7 +88,14 @@ const Header = () => {
         >
           My Application
         </Typography>
-
+        <IconButton
+          edge="end"
+          color="default"
+          aria-label="shopping-cart"
+          sx={{ mr: 2 }}
+        >
+          <ShoppingCart sx={{ color: "#FF8C00" }} />
+        </IconButton>
         <IconButton
           edge="end"
           color="default"
@@ -120,6 +131,7 @@ const Header = () => {
             </Avatar>
           )}
         </IconButton>
+
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
