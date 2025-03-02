@@ -12,28 +12,66 @@ import {
   ListItemText,
   Badge,
 } from "@mui/material";
-import { Menu as MenuIcon, Logout as LogoutIcon, ShoppingCart } from "@mui/icons-material";
+import {
+  Menu as MenuIcon,
+  Logout as LogoutIcon,
+  ShoppingCart,
+  DeleteForever,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Header = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null); // User menu anchor
+  const [anchorElCart, setAnchorElCart] = useState(null); // Cart menu anchor
   const [user, setUser] = useState(null);
   const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
 
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleUserMenuClick = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCartMenuClick = (event) => {
+    fetchCartItems();
+    setAnchorElCart(event.currentTarget); // Open the cart menu on icon click
   };
 
   const handleMenuClose = () => {
-    setAnchorEl(null);
+    setAnchorElUser(null);
+    setAnchorElCart(null); // Close both menus
   };
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     setUser(null);
     navigate("/auth/signin");
+  };
+
+  const handleRemoveCartItem = async (productId) => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.error("No token found in localStorage");
+      return;
+    }
+
+    const userId = jwtDecode(token).id;
+
+    try {
+      await axios.post(
+        `http://localhost:8080/api/v1/cart/${userId}/remove/${productId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      // After the product is removed, refresh the cart items
+      fetchCartItems();
+    } catch (error) {
+      console.error("Error removing product from cart:", error);
+    }
   };
 
   let userId = null;
@@ -69,11 +107,6 @@ const Header = () => {
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
-  };
-
-  const handleCartClick = (event) => {
-    fetchCartItems();
-    handleMenuClick(event);  // Open the menu on cart icon click
   };
 
   useEffect(() => {
@@ -136,7 +169,7 @@ const Header = () => {
           color="default"
           aria-label="shopping-cart"
           sx={{ mr: 2 }}
-          onClick={handleCartClick}
+          onClick={handleCartMenuClick} // Use separate function for cart menu
         >
           <Badge badgeContent={cartItems.length} color="error">
             <ShoppingCart sx={{ color: "#FF8C00" }} />
@@ -146,7 +179,7 @@ const Header = () => {
           edge="end"
           color="default"
           aria-label="account"
-          onClick={handleMenuClick}
+          onClick={handleUserMenuClick} // Use separate function for user menu
         >
           {user ? (
             <Avatar
@@ -178,9 +211,10 @@ const Header = () => {
           )}
         </IconButton>
 
+        {/* User Menu */}
         <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
+          anchorEl={anchorElUser}
+          open={Boolean(anchorElUser)}
           onClose={handleMenuClose}
           sx={{
             "& .MuiPaper-root": {
@@ -241,8 +275,8 @@ const Header = () => {
 
         {/* Cart Menu */}
         <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
+          anchorEl={anchorElCart}
+          open={Boolean(anchorElCart)}
           onClose={handleMenuClose}
           sx={{
             "& .MuiPaper-root": {
@@ -257,6 +291,13 @@ const Header = () => {
               <MenuItem key={product.id}>
                 <Typography variant="body1">{product.name}</Typography>
                 <Typography variant="body2">Price: ${product.price}</Typography>
+                <IconButton
+                  edge="end"
+                  color="error"
+                  onClick={() => handleRemoveCartItem(product.id)} // Remove item from cart
+                >
+                  <DeleteForever />
+                </IconButton>
               </MenuItem>
             ))
           ) : (
