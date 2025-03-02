@@ -44,10 +44,9 @@ const ProductCards = () => {
 
   if (token) {
     try {
-      // Decode the JWT to extract user data
       const decodedToken = jwtDecode(token);
       userId = decodedToken.id;
-      console.log(decodedToken); // You can log the decoded token to check its structure
+      console.log(decodedToken);
     } catch (error) {
       console.error("Error decoding the token:", error);
     }
@@ -62,7 +61,6 @@ const ProductCards = () => {
     }
 
     try {
-      // Step 1: Check if the cart exists for the user
       let cartResponse;
       try {
         cartResponse = await axios.get(
@@ -72,35 +70,30 @@ const ProductCards = () => {
           }
         );
       } catch (error) {
-        // If the cart doesn't exist, it will throw an error. We'll handle it by creating the cart.
         if (error.response && error.response.status === 404) {
-          // Cart doesn't exist, create a new cart
           console.log("Cart does not exist. Creating new cart...");
           await axios.post(
             `http://localhost:8080/api/v1/cart/${userId}`,
-            {}, // Empty body for cart creation
+            {},
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           );
           console.log("Cart created for the user.");
         } else {
-          // Other errors (e.g., network issues) are logged
           console.error("Error checking cart existence:", error);
           return;
         }
       }
 
-      // Step 2: Add the selected product to the user's cart
       await axios.post(
         `http://localhost:8080/api/v1/cart/${userId}/add/${product.id}`,
-        {}, // Empty body, just to trigger the product addition
+        {},
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      // Optionally, update the cart state locally after adding the product
       setCart((prevCart) => [...prevCart, product]);
     } catch (error) {
       console.error("Error adding product to cart:", error);

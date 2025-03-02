@@ -22,8 +22,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Header = () => {
-  const [anchorElUser, setAnchorElUser] = useState(null); // User menu anchor
-  const [anchorElCart, setAnchorElCart] = useState(null); // Cart menu anchor
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [anchorElCart, setAnchorElCart] = useState(null);
   const [user, setUser] = useState(null);
   const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
@@ -34,12 +34,12 @@ const Header = () => {
 
   const handleCartMenuClick = (event) => {
     fetchCartItems();
-    setAnchorElCart(event.currentTarget); // Open the cart menu on icon click
+    setAnchorElCart(event.currentTarget);
   };
 
   const handleMenuClose = () => {
     setAnchorElUser(null);
-    setAnchorElCart(null); // Close both menus
+    setAnchorElCart(null);
   };
 
   const handleLogout = () => {
@@ -67,7 +67,6 @@ const Header = () => {
           },
         }
       );
-      // After the product is removed, refresh the cart items
       fetchCartItems();
     } catch (error) {
       console.error("Error removing product from cart:", error);
@@ -169,7 +168,7 @@ const Header = () => {
           color="default"
           aria-label="shopping-cart"
           sx={{ mr: 2 }}
-          onClick={handleCartMenuClick} // Use separate function for cart menu
+          onClick={handleCartMenuClick}
         >
           <Badge badgeContent={cartItems.length} color="error">
             <ShoppingCart sx={{ color: "#FF8C00" }} />
@@ -179,7 +178,7 @@ const Header = () => {
           edge="end"
           color="default"
           aria-label="account"
-          onClick={handleUserMenuClick} // Use separate function for user menu
+          onClick={handleUserMenuClick}
         >
           {user ? (
             <Avatar
@@ -211,7 +210,6 @@ const Header = () => {
           )}
         </IconButton>
 
-        {/* User Menu */}
         <Menu
           anchorEl={anchorElUser}
           open={Boolean(anchorElUser)}
@@ -273,7 +271,6 @@ const Header = () => {
           </MenuItem>
         </Menu>
 
-        {/* Cart Menu */}
         <Menu
           anchorEl={anchorElCart}
           open={Boolean(anchorElCart)}
@@ -294,7 +291,7 @@ const Header = () => {
                 <IconButton
                   edge="end"
                   color="error"
-                  onClick={() => handleRemoveCartItem(product.id)} // Remove item from cart
+                  onClick={() => handleRemoveCartItem(product.id)}
                 >
                   <DeleteForever />
                 </IconButton>
