@@ -13,7 +13,11 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { Menu as MenuIcon, Close as CloseIcon } from "@mui/icons-material";
+import {
+  Menu as MenuIcon,
+  Close as CloseIcon,
+  Email,
+} from "@mui/icons-material";
 import ArtTrackIcon from "@mui/icons-material/ArtTrack";
 import { Link, useLocation } from "react-router-dom";
 import { ReactComponent as LogoDGSSI } from "../../src/assets/logo.svg";
@@ -37,8 +41,12 @@ const Sidebar = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const menuItems = [
-    // { text: "Overview", icon: <Home />, path: "/" },
     { text: "Products", icon: <ArtTrackIcon />, path: "/products" },
+    {
+      text: "Contact",
+      icon: <Email sx={{ fontSize: 28, color: "#fff" }} />,
+      path: "/contact",
+    },
   ];
 
   const location = useLocation();

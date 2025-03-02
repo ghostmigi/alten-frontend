@@ -10,6 +10,7 @@ import Layout from "./sidebar/layout";
 import Product from "./product/Product";
 import AddProduct from "./product/AddProduct";
 import { CartProvider } from "./cart/CartContext";
+import Contact from "./contact/Contact";
 
 function App() {
   return (
@@ -35,6 +36,18 @@ function App() {
                 element={
                   <Layout>
                     <AddProduct />
+                  </Layout>
+                }
+              />
+            }
+          />
+          <Route
+            path="/contact"
+            element={
+              <PrivateRoute
+                element={
+                  <Layout>
+                    <Contact />
                   </Layout>
                 }
               />
